@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Capi 2 - O Regresso das Capivaras</title>
+    <!-- Tailwind CSS para um design responsivo e moderno -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons para ícones vetorizados de alta qualidade -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@400;600;700&display=swap');
+        
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: radial-gradient(circle at top, #ff9f43 0%, #e67e22 100%);
+        }
+        
+        .game-title {
+            font-family: 'Fredoka One', cursive;
+        }
+
+        /* Animações de flutuação para as peluches transparentes */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        .float-animation {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .float-animation-delay-1 {
+            animation: float 4.5s ease-in-out infinite;
+            animation-delay: 1s;
+        }
+
+        .float-animation-delay-2 {
+            animation: float 3.8s ease-in-out infinite;
+            animation-delay: 2s;
+        }
+
+        .float-animation-delay-3 {
+            animation: float 5s ease-in-out infinite;
+            animation-delay: 1.5s;
+        }
+
+        /* Cursor Personalizado: Capivara Pixel-Art (image_385142.png) com a sua linda gravatinha vermelha */
+        .custom-capi-cursor {
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path d='M0 0h12v2H2v10H0z' fill='%23ffffff' stroke='%23000000' stroke-width='1.5'/><rect x='6' y='8' width='2' height='2' fill='%23ffffff' stroke='%23000000' stroke-width='1'/><rect x='10' y='2' width='2' height='2' fill='%238c6239'/><rect x='20' y='2' width='2' height='2' fill='%238c6239'/><rect x='10' y='4' width='12' height='16' fill='%23ab7036'/><rect x='12' y='7' width='2' height='4' fill='%23111111'/><rect x='18' y='7' width='2' height='4' fill='%23111111'/><rect x='15' y='11' width='2' height='2' fill='%23111111'/><path d='M14 13h4v1h-4z' fill='%23111111'/><rect x='11' y='20' width='3' height='2' fill='%235c3d21'/><rect x='19' y='20' width='3' height='2' fill='%235c3d21'/><rect x='13' y='14' width='2' height='2' fill='%23ef4444'/><rect x='17' y='14' width='2' height='2' fill='%23ef4444'/><rect x='15' y='14' width='2' height='2' fill='%23b91c1c'/><path d='M4 12 l6 6 l-6 6 l-6 -6 z' fill='%23ffffff' stroke='%23000000' stroke-width='1.5'/><rect x='2' y='16' width='4' height='4' fill='%23111111'/></svg>") 0 0, auto;
+        }
+    </style>
+</head>
+<body class="text-white min-h-screen flex flex-col selection:bg-yellow-400 selection:text-gray-900">
+
+    <!-- Topo / Cabeçalho -->
+    <header class="relative overflow-hidden pt-16 pb-20 px-4 text-center">
+        <!-- Detalhes de fundo decorativos -->
+        <div class="absolute top-5 left-5 opacity-20 w-24 h-24 bg-white rounded-full blur-xl"></div>
+        <div class="absolute bottom-5 right-5 opacity-20 w-32 h-32 bg-yellow-300 rounded-full blur-2xl"></div>
+
+        <div class="max-w-4xl mx-auto relative z-10">
+            <!-- Selo de Sequência -->
+            <span class="inline-block bg-yellow-400 text-gray-900 font-bold px-4 py-1.5 rounded-full text-sm uppercase tracking-wider shadow-lg mb-4 border-2 border-white game-title transform -rotate-2">
+                A Sequência Mais Esperada!
+            </span>
+            
+            <!-- Título Principal -->
+            <h1 class="text-6xl md:text-8xl font-extrabold tracking-tight text-white drop-shadow-[0_5px_5px_rgba(0,0,0,0.5)] game-title mb-2">
+                JOGO DA CAPI <span class="text-yellow-300">2</span>
+            </h1>
+            
+            <p class="text-xl md:text-3xl font-bold text-yellow-100 drop-shadow-md italic mb-8">
+                "O Regresso das Capivaras"
+            </p>
+
+            <!-- Status de Desenvolvimento -->
+            <div class="inline-flex items-center gap-2 bg-slate-900/80 backdrop-blur-md px-6 py-3 rounded-full border-2 border-yellow-400 shadow-2xl">
+                <span class="flex h-3.5 w-3.5 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-green-500"></span>
+                </span>
+                <span class="font-bold text-sm md:text-base tracking-wide">EM DESENVOLVIMENTO ATIVO</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="flex-grow max-w-6xl mx-auto px-4 w-full">
+        
+        <!-- Secção Sobre o Jogo -->
+        <section class="bg-slate-900/60 backdrop-blur-md border-4 border-amber-600 rounded-3xl p-6 md:p-10 shadow-2xl mb-16 text-center transform hover:scale-[1.01] transition-all duration-300">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-yellow-300 game-title mb-6 flex items-center justify-center gap-3">
+                <i data-lucide="sparkles" class="text-yellow-400"></i> Uma Nova Jornada Começou! <i data-lucide="sparkles" class="text-yellow-400"></i>
+            </h2>
+            <p class="text-lg md:text-xl leading-relaxed text-gray-100 max-w-3xl mx-auto">
+                Depois do estrondoso sucesso do primeiro jogo, a nossa querida <strong>Capizinha</strong> (a Capi original!) está de volta com os seus novos amigos! Prepara-te para explorar mundos incríveis, evitar perigos e colecionar gravatas com este bando fantástico!
+            </p>
+        </section>
+
+        <!-- Secção de Personagens (O Bando da Capi) -->
+        <section class="mb-16">
+            <h2 class="text-4xl font-extrabold text-center text-white drop-shadow-lg mb-12 game-title flex items-center justify-center gap-3">
+                <i data-lucide="users" class="w-10 h-10"></i> Conhece os Novos Heróis
+            </h2>
+            
+            <!-- Grid de Personagens com as Peluches Transparentes na Ordem Solicitada -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                
+                <!-- Personagem 1 (1ª Foto): Dino-Chave -->
+                <div class="bg-slate-900/85 border-4 border-amber-700/60 rounded-2xl p-5 text-center shadow-xl hover:border-teal-400 transition-all duration-300 flex flex-col justify-between group">
+                    <div class="relative mb-4 overflow-hidden rounded-xl bg-gradient-to-b from-teal-500/10 to-teal-950/40 p-4 border border-teal-500/20">
+                        <!-- 1ª foto transparente: 4961.png -->
+                        <img src="4961.png" alt="Dino-Chave" class="w-full h-52 object-contain mx-auto float-animation group-hover:scale-110 transition-transform duration-300 filter drop-shadow-[0_5px_10px_rgba(20,184,166,0.4)]">
+                        <span class="absolute top-3 right-3 bg-teal-600 text-white font-bold text-xs px-2.5 py-1 rounded-full uppercase tracking-wider shadow">Místico</span>
+                    </div>
+                    <div class="mt-2">
+                        <h3 class="text-2xl font-bold text-yellow-300 game-title mb-2">Dino-Chave</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed">
+                            O nosso simpático tiranossauro verde de dentes afiados. Ele usa a sua boca grande para carregar as chaves dos portais.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-800 text-teal-400 text-xs font-bold tracking-widest uppercase">
+                        Habilidade: Guardar Chaves
+                    </div>
+                </div>
+
+                <!-- Personagem 2 (2ª Foto): Leopardo -->
+                <div class="bg-slate-900/85 border-4 border-amber-700/60 rounded-2xl p-5 text-center shadow-xl hover:border-orange-500 transition-all duration-300 flex flex-col justify-between group">
+                    <div class="relative mb-4 overflow-hidden rounded-xl bg-gradient-to-b from-orange-500/10 to-orange-950/40 p-4 border border-orange-500/20">
+                        <!-- 2ª foto transparente: 4960.png -->
+                        <img src="4960.png" alt="Leopardo" class="w-full h-52 object-contain mx-auto float-animation-delay-1 group-hover:scale-110 transition-transform duration-300 filter drop-shadow-[0_5px_10px_rgba(249,115,22,0.4)]">
+                        <span class="absolute top-3 right-3 bg-orange-600 text-white font-bold text-xs px-2.5 py-1 rounded-full uppercase tracking-wider shadow">Veloz</span>
+                    </div>
+                    <div class="mt-2">
+                        <h3 class="text-2xl font-bold text-yellow-300 game-title mb-2">Leopardo</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed">
+                            Com manchas realistas e braços abertos. Foi ele quem deu "a mão" (o apoio!) para eleger a Capizinha como a líder oficial do bando!
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-800 text-orange-400 text-xs font-bold tracking-widest uppercase">
+                        Habilidade: Voto de Líder
+                    </div>
+                </div>
+
+                <!-- Personagem 3 (3ª Foto): Capizinha -->
+                <div class="bg-slate-900/85 border-4 border-amber-700/60 rounded-2xl p-5 text-center shadow-xl hover:border-red-500 transition-all duration-300 flex flex-col justify-between group">
+                    <div class="relative mb-4 overflow-hidden rounded-xl bg-gradient-to-b from-red-500/10 to-red-950/40 p-4 border border-red-500/20">
+                        <!-- 3ª foto transparente: 4959.png -->
+                        <img src="4959.png" alt="Capizinha" class="w-full h-52 object-contain mx-auto float-animation-delay-2 group-hover:scale-110 transition-transform duration-300 filter drop-shadow-[0_5px_10px_rgba(239,68,68,0.4)]">
+                        <span class="absolute top-3 right-3 bg-red-600 text-white font-bold text-xs px-2.5 py-1 rounded-full uppercase tracking-wider shadow">Líder</span>
+                    </div>
+                    <div class="mt-2">
+                        <h3 class="text-2xl font-bold text-yellow-300 game-title mb-2">Capizinha</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed">
+                            A nossa líder de gravata borboleta vermelha (a Capi original!). É líder porque o Leopardo lhe deu "a mão". (Nota: A sua irmã, a Capi-Irmã, adora ketchup!)
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-800 text-red-400 text-xs font-bold tracking-widest uppercase">
+                        Habilidade: Super Salto
+                    </div>
+                </div>
+
+                <!-- Personagem 4 (4ª Foto): Amarelito -->
+                <div class="bg-slate-900/85 border-4 border-amber-700/60 rounded-2xl p-5 text-center shadow-xl hover:border-yellow-400 transition-all duration-300 flex flex-col justify-between group">
+                    <div class="relative mb-4 overflow-hidden rounded-xl bg-gradient-to-b from-yellow-500/10 to-yellow-950/40 p-4 border border-yellow-500/20">
+                        <!-- 4ª foto transparente: 4958.png -->
+                        <img src="4958.png" alt="Amarelito" class="w-full h-52 object-contain mx-auto float-animation-delay-3 group-hover:scale-110 transition-transform duration-300 filter drop-shadow-[0_5px_10px_rgba(234,179,8,0.4)]">
+                        <span class="absolute top-3 right-3 bg-yellow-500 text-gray-900 font-bold text-xs px-2.5 py-1 rounded-full uppercase tracking-wider shadow">Esfera</span>
+                    </div>
+                    <div class="mt-2">
+                        <h3 class="text-2xl font-bold text-yellow-300 game-title mb-2">Amarelito</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed">
+                            Super redondo, fofinho e com expressão de observador atento. Consegue rebolar muito rápido para passar por fendas estreitas.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-800 text-yellow-400 text-xs font-bold tracking-widest uppercase">
+                        Habilidade: Rebolar Rápido
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Secção de Canal do YouTube -->
+        <section class="bg-red-600 border-4 border-red-800 rounded-3xl p-6 md:p-8 shadow-2xl mb-16 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 transform hover:scale-[1.01] transition-all duration-300">
+            <div class="absolute -right-10 -bottom-10 opacity-10 text-white pointer-events-none">
+                <i data-lucide="youtube" class="w-64 h-64"></i>
+            </div>
+            <div class="flex items-center gap-5 text-left relative z-10 flex-col md:flex-row text-center md:text-left">
+                <div class="bg-white text-red-600 p-4 rounded-full shadow-lg">
+                    <i data-lucide="youtube" class="w-12 h-12"></i>
+                </div>
+                <div>
+                    <h3 class="text-3xl font-extrabold game-title text-white">Inscreve-te no Canal!</h3>
+                    <p class="text-red-100 text-lg mt-1">Acompanha as atualizações, novidades de desenvolvimento e gameplays no canal do Daviearthur12!</p>
+                </div>
+            </div>
+            <a href="https://www.youtube.com/@Daviearthur12" target="_blank" onclick="playSqueak()" class="relative z-10 bg-white hover:bg-yellow-300 text-red-600 hover:text-red-700 font-extrabold px-8 py-4 rounded-full text-xl shadow-2xl game-title transition-all transform hover:scale-105 inline-flex items-center gap-2">
+                <i data-lucide="heart" class="w-6 h-6 animate-pulse"></i> Subscrever!
+            </a>
+        </section>
+
+        <!-- Mini-Jogo Interativo: Treino da Capizinha! -->
+        <section class="bg-slate-900/80 border-4 border-yellow-400 rounded-3xl p-6 md:p-8 shadow-2xl mb-16 relative overflow-hidden">
+            <div class="max-w-3xl mx-auto text-center relative z-10">
+                <span class="bg-yellow-400 text-slate-900 font-bold text-xs px-3 py-1 rounded-full uppercase tracking-wider mb-3 inline-block">Mini-Game do Site</span>
+                <h3 class="text-3xl font-bold game-title text-yellow-300 mb-2">Treino de Agilidade da Capizinha!</h3>
+                <p class="text-gray-300 mb-6">Ajuda a Capizinha a recolher as gravatas vermelhas que caem do céu e desvia-te dos blocos pretos!</p>
+                
+                <!-- Placar -->
+                <div class="flex justify-center gap-8 mb-4">
+                    <div class="bg-slate-800 px-4 py-2 rounded-lg border border-yellow-400/50">
+                        <span class="text-xs text-gray-400 uppercase tracking-widest block">Pontos</span>
+                        <span id="score" class="text-2xl font-bold text-yellow-300">0</span>
+                    </div>
+                    <div class="bg-slate-800 px-4 py-2 rounded-lg border border-yellow-400/50">
+                        <span class="text-xs text-gray-400 uppercase tracking-widest block">Recorde</span>
+                        <span id="high-score" class="text-2xl font-bold text-white">0</span>
+                    </div>
+                </div>
+
+                <!-- Tela do Jogo (Com o Cursor da Capivara Pixel-Art) -->
+                <div id="game-container" class="custom-capi-cursor relative w-full h-64 bg-slate-950 rounded-2xl border-2 border-slate-700 overflow-hidden flex items-center justify-center">
+                    <div id="start-screen" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/90 z-20 p-4">
+                        <i data-lucide="play-circle" class="w-12 h-12 text-yellow-300 animate-bounce mb-3"></i>
+                        <button onclick="startGame()" class="bg-yellow-400 hover:bg-yellow-300 text-slate-900 font-bold px-6 py-2.5 rounded-full text-lg shadow-lg game-title transition-all transform hover:scale-105">
+                            Começar Treino!
+                        </button>
+                    </div>
+                    
+                    <!-- Elementos Dinâmicos do Jogo -->
+                    <div id="catcher" class="absolute bottom-4 left-1/2 -translate-x-1/2 transition-all duration-100 ease-out select-none" style="width: 50px; height: 50px;">
+                        <!-- O jogador é o ficheiro transparente oficial da Capizinha (4959.png)! -->
+                        <img src="4959.png" class="w-full h-full object-contain filter drop-shadow-[0_2px_5px_rgba(255,255,255,0.5)]" alt="Capizinha Jogadora">
+                    </div>
+                </div>
+                <p class="text-xs text-gray-400 mt-2">Move o cursor pixel-art da Capizinha para guiar o treino ou arrasta o dedo no ecrã!</p>
+            </div>
+        </section>
+
+        <!-- Secção de Downloads & Comunidade -->
+        <section class="bg-gradient-to-br from-slate-900 to-slate-950 border-4 border-amber-600 rounded-3xl p-8 md:p-12 text-center shadow-2xl mb-12">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-white game-title mb-4 flex items-center justify-center gap-3">
+                <i data-lucide="download-cloud"></i> Links Oficiais de Download
+            </h2>
+            <p class="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
+                Descarrega já o primeiro jogo clássico nos links oficiais e acompanha as futuras versões do Jogo da Capi 2!
+            </p>
+
+            <!-- Links Oficiais Reais e Atualizados -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto mb-8">
+                <!-- GameJolt (Link Real) -->
+                <a href="https://gamejolt.com/games/jogodacapi/1061293" target="_blank" onclick="playSqueak()" class="flex flex-col items-center justify-center p-6 bg-red-600/10 border-2 border-red-500 rounded-2xl hover:bg-red-600 hover:text-white transition-all duration-300 group shadow-lg transform hover:-translate-y-1">
+                    <i data-lucide="gamepad-2" class="w-10 h-10 text-red-500 group-hover:text-white mb-3 transition-colors"></i>
+                    <span class="font-bold text-lg game-title">GameJolt</span>
+                    <span class="text-xs text-gray-400 group-hover:text-red-100 mt-1">Página do Jogo</span>
+                </a>
+
+                <!-- GitHub (Link Real com aviso de Windows 7 a 11 x64) -->
+                <a href="https://github.com/dlrg0509-hub/jogo-da-capi-pc" target="_blank" onclick="playSqueak()" class="flex flex-col items-center justify-center p-6 bg-zinc-800/20 border-2 border-zinc-700 rounded-2xl hover:bg-zinc-800 hover:text-white transition-all duration-300 group shadow-lg transform hover:-translate-y-1">
+                    <i data-lucide="github" class="w-10 h-10 text-zinc-400 group-hover:text-white mb-3 transition-colors"></i>
+                    <span class="font-bold text-lg game-title">GitHub</span>
+                    <span class="text-xs text-gray-400 group-hover:text-zinc-300 mt-1">Código Fonte</span>
+                    <!-- Aviso de compatibilidade -->
+                    <span class="mt-3 inline-flex items-center gap-1.5 bg-zinc-950/80 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full border border-yellow-400/30">
+                        <i data-lucide="monitor" class="w-3.5 h-3.5"></i> Apenas Win 7 a 11 x64
+                    </span>
+                </a>
+
+                <!-- MediaFire (Link Real com aviso de Windows 7 a 11 x64) -->
+                <a href="https://www.mediafire.com/file/008efbkysvy7og1/jogo_da_capivara_%25281%2529.zip/file" target="_blank" onclick="playSqueak()" class="flex flex-col items-center justify-center p-6 bg-blue-600/10 border-2 border-blue-500 rounded-2xl hover:bg-blue-600 hover:text-white transition-all duration-300 group shadow-lg transform hover:-translate-y-1">
+                    <i data-lucide="cloud" class="w-10 h-10 text-blue-500 group-hover:text-white mb-3 transition-colors"></i>
+                    <span class="font-bold text-lg game-title">MediaFire</span>
+                    <span class="text-xs text-gray-400 group-hover:text-blue-100 mt-1">Download Direto (.zip)</span>
+                    <!-- Aviso de compatibilidade -->
+                    <span class="mt-3 inline-flex items-center gap-1.5 bg-slate-950/80 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full border border-yellow-400/30">
+                        <i data-lucide="monitor" class="w-3.5 h-3.5"></i> Apenas Win 7 a 11 x64
+                    </span>
+                </a>
+            </div>
+
+            <!-- Outros Projetos e Utilitários Extras -->
+            <div class="bg-slate-900 border-2 border-amber-600/40 p-6 rounded-2xl max-w-3xl mx-auto mb-8 text-left flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div class="flex items-start gap-4">
+                    <div class="bg-amber-600 text-white p-3 rounded-full mt-1">
+                        <i data-lucide="cpu" class="w-8 h-8"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-yellow-300 text-lg game-title">Utilitário Extra: Limpar PC</h4>
+                        <p class="text-sm text-gray-300 mt-1">
+                            O teu PC está lento para rodar os jogos? Descarrega o nosso script oficial para limpar ficheiros temporários e otimizar o teu sistema num piscar de olhos!
+                        </p>
+                    </div>
+                </div>
+                <a href="https://github.com/dlrg0509-hub/Limpar-PC._." target="_blank" onclick="playSqueak()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition-all transform hover:scale-105 inline-flex items-center gap-2 shrink-0">
+                    <i data-lucide="sparkles" class="w-5 h-5"></i> Limpar PC
+                </a>
+            </div>
+
+            <!-- Box da Versão ISO -->
+            <div class="inline-flex flex-col sm:flex-row items-center gap-4 bg-yellow-400/10 border-2 border-dashed border-yellow-400 p-6 rounded-2xl max-w-2xl mx-auto w-full">
+                <div class="bg-yellow-400 text-slate-900 p-3 rounded-full shadow-lg">
+                    <i data-lucide="disc" class="w-8 h-8 animate-spin" style="animation-duration: 6s;"></i>
+                </div>
+                <div class="text-left">
+                    <h4 class="font-bold text-yellow-300 text-lg game-title">Edição Física Retro (.ISO)</h4>
+                    <p class="text-sm text-gray-300 mt-1">
+                        Cria a tua coleção! Teremos um ficheiro de imagem ISO pronto para gravares num CD-R ou DVD-R, perfeito para correr no teu computador ou guardar na prateleira!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="bg-slate-900 py-10 px-4 mt-16 text-center border-t-4 border-amber-600">
+        <div class="max-w-4xl mx-auto">
+            <h3 class="text-2xl font-bold game-title text-yellow-300 mb-2">Jogo da Capi 2: O Regresso das Capivaras</h3>
+            <p class="text-sm text-gray-400 mb-6">A saga de capivaras mais carismática da internet.</p>
+            <div class="flex justify-center gap-6 text-gray-500 mb-6">
+                <i data-lucide="smile" class="hover:text-yellow-400 cursor-pointer transition-colors"></i>
+                <i data-lucide="heart" class="hover:text-red-500 cursor-pointer transition-colors"></i>
+                <i data-lucide="shield" class="hover:text-blue-500 cursor-pointer transition-colors"></i>
+            </div>
+            <p class="text-xs text-gray-500">
+                Desenvolvido por ti e pela tua comunidade apaixonada. Todos os direitos reservados &copy; 2026.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Sons Sintetizados via Web Audio API -->
+    <script>
+        // Inicializar ícones do Lucide
+        lucide.createIcons();
+
+        // Som de guincho fofo de capivara sintetizado por oscilador
+        function playSqueak() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc1 = audioCtx.createOscillator();
+                const gain1 = audioCtx.createGain();
+                
+                osc1.type = 'triangle';
+                osc1.frequency.setValueAtTime(450, audioCtx.currentTime);
+                osc1.frequency.exponentialRampToValueAtTime(1100, audioCtx.currentTime + 0.12);
+                
+                gain1.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain1.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                
+                osc1.connect(gain1);
+                gain1.connect(audioCtx.destination);
+                
+                osc1.start();
+                osc1.stop(audioCtx.currentTime + 0.15);
+            } catch (e) {}
+        }
+
+        // --- SISTEMA DO MINI-JOGO ---
+        const gameContainer = document.getElementById('game-container');
+        const catcher = document.getElementById('catcher');
+        const scoreEl = document.getElementById('score');
+        const highScoreEl = document.getElementById('high-score');
+        const startScreen = document.getElementById('start-screen');
+        
+        let score = 0;
+        let highScore = 0;
+        let gameActive = false;
+        let gameLoopInterval;
+        let spawnInterval;
+        let activeElements = [];
+
+        // Captura de movimentos (Rato e Touch)
+        gameContainer.addEventListener('mousemove', (e) => {
+            if (!gameActive) return;
+            const rect = gameContainer.getBoundingClientRect();
+            let x = e.clientX - rect.left;
+            moveCatcher(x);
+        });
+
+        gameContainer.addEventListener('touchmove', (e) => {
+            if (!gameActive) return;
+            const rect = gameContainer.getBoundingClientRect();
+            let x = e.touches[0].clientX - rect.left;
+            moveCatcher(x);
+        });
+
+        function moveCatcher(xPosition) {
+            const containerWidth = gameContainer.clientWidth;
+            const halfCatcher = catcher.clientWidth / 2;
+            let targetX = xPosition - halfCatcher;
+            
+            if (targetX < 0) targetX = 0;
+            if (targetX > containerWidth - catcher.clientWidth) targetX = containerWidth - catcher.clientWidth;
+            
+            catcher.style.left = `${targetX}px`;
+        }
+
+        function startGame() {
+            playSqueak();
+            score = 0;
+            scoreEl.textContent = score;
+            startScreen.style.display = 'none';
+            gameActive = true;
+            
+            activeElements.forEach(el => el.remove());
+            activeElements = [];
+
+            gameLoopInterval = setInterval(updateGame, 1000 / 60);
+            spawnInterval = setInterval(spawnItem, 1200);
+        }
+
+        function spawnItem() {
+            if (!gameActive) return;
+            const containerWidth = gameContainer.clientWidth;
+            const item = document.createElement('div');
+            item.className = 'absolute select-none';
+            
+            const isTie = Math.random() > 0.35;
+            
+            if (isTie) {
+                item.dataset.type = 'tie';
+                item.innerHTML = '<div style="width:24px; height:24px; background-color:#ef4444; border-radius:3px; transform:rotate(45deg); border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); margin:0 auto; position:relative;"><div style="width:6px; height:6px; background-color:#ffffff; border-radius:50%; position:absolute; top:2px; left:2px;"></div></div>';
+            } else {
+                item.dataset.type = 'bomb';
+                item.innerHTML = '<div style="width:24px; height:24px; background-color:#111827; border-radius:6px; border:2px solid #ef4444; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:12px; color:white; box-shadow: 0 0 8px rgba(239,68,68,0.5);">X</div>';
+            }
+            
+            item.style.top = '-30px';
+            item.style.left = `${Math.random() * (containerWidth - 30)}px`;
+            
+            gameContainer.appendChild(item);
+            activeElements.push(item);
+        }
+
+        function updateGame() {
+            const containerHeight = gameContainer.clientHeight;
+            const catcherRect = catcher.getBoundingClientRect();
+            
+            for (let i = activeElements.length - 1; i >= 0; i--) {
+                const item = activeElements[i];
+                let currentTop = parseFloat(item.style.top) || 0;
+                
+                currentTop += 3.5 + (score * 0.15);
+                item.style.top = `${currentTop}px`;
+                
+                const itemRect = item.getBoundingClientRect();
+                
+                if (
+                    itemRect.bottom >= catcherRect.top &&
+                    itemRect.top <= catcherRect.bottom &&
+                    itemRect.right >= catcherRect.left &&
+                    itemRect.left <= catcherRect.right
+                ) {
+                    if (item.dataset.type === 'tie') {
+                        score += 10;
+                        scoreEl.textContent = score;
+                        playGrabSound();
+                    } else {
+                        gameOver();
+                        return;
+                    }
+                    item.remove();
+                    activeElements.splice(i, 1);
+                    continue;
+                }
+                
+                if (currentTop > containerHeight) {
+                    if (item.dataset.type === 'tie') {
+                        score = Math.max(0, score - 5);
+                        scoreEl.textContent = score;
+                    }
+                    item.remove();
+                    activeElements.splice(i, 1);
+                }
+            }
+        }
+
+        // Som de coleta de item
+        function playGrabSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.08);
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.1);
+            } catch(e){}
+        }
+
+        // Fim de jogo
+        function gameOver() {
+            gameActive = false;
+            clearInterval(gameLoopInterval);
+            clearInterval(spawnInterval);
+            
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(250, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(80, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.35);
+            } catch(e){}
+
+            if (score > highScore) {
+                highScore = score;
+                highScoreEl.textContent = highScore;
+            }
+            
+            startScreen.innerHTML = `
+                <i data-lucide="award" class="w-12 h-12 text-yellow-400 mb-2"></i>
+                <h4 class="text-2xl font-bold text-red-400 game-title mb-1">Fim do Treino!</h4>
+                <p class="text-gray-300 text-sm mb-4">Pontuação Obtida: ${score} pontos</p>
+                <button onclick="startGame()" class="bg-yellow-400 hover:bg-yellow-300 text-slate-900 font-bold px-6 py-2.5 rounded-full text-md shadow-lg game-title transition-all transform hover:scale-105">
+                    Tentar de Novo
+                </button>
+            `;
+            startScreen.style.display = 'flex';
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
